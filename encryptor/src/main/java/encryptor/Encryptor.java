@@ -42,9 +42,11 @@ public class Encryptor {
 	}
 	
 	private static void printFilePath(String action, String path){
+		assert(action.equals(null) || path.equals(null));
+		
 		System.out.println(action + " simulation of file " + path);
 	}
-	private static String isValidFilePath (String path) throws IOException{
+	public static String isValidFilePath (String path) throws IOException{
 		File f;
 		boolean isValid = false;
 		
