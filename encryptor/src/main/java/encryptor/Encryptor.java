@@ -1,22 +1,85 @@
 package encryptor;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.StringTokenizer;
-
+import java.util.Random;
 
 
 public class Encryptor {
 	private static InputReader in = new InputReader();
 	
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException {
+		int mode;
+		String[] pathPointer = new String[1];
+
+		mode = getInput(pathPointer);
+		switch (mode) {
+		case 1:
+			encryption(pathPointer[0]);
+
+			break;
+		case 0:
+			decreption(pathPointer[0]);
+
+			break;
+		default: System.out.println("Not a valid mode - only 1 for encryption / 0 for decryption");
+			return;
+		}
+
+	}
+	
+	 static void encryption(String path) throws IOException {
+		byte key;
+		byte[] fileArray;
+		Path inputFile, outputFile;
 		
-		getInput();
+		inputFile = Paths.get(path);
+		fileArray = Files.readAllBytes(inputFile);
+		
+		key = generateRandomByte();
+		System.out.println("the key for encryption is: " + key);
+		
+		for (int i = 0; i < fileArray.length; i++) {
+			fileArray[i] = caesarCipherOnBytes(fileArray[i], key);
+		}
+		
+		outputFile = Paths.get(path + ".encrypted");
+		Files.write(outputFile, fileArray);
+	}
+	
+	static byte caesarCipherOnBytes(byte b, byte key){
+		return (byte) (b + key);
+	
 	}
 
-	private static void getInput() throws IOException{
+	 static void decreption(String path) throws IOException {
+		byte key; 
+		byte[] fileArray;
+		Path inputFile,outputFile;
+		System.out.println("Enter the key for decreption - should be in range (-2^7 - 2^7-1");
+		key = in.nextByte();
+		
+		inputFile = Paths.get(path);
+		fileArray = Files.readAllBytes(inputFile);
+		
+		for (int i = 0; i < fileArray.length; i++) {
+			fileArray[i] = caesarCipherOnBytes(fileArray[i], key);
+		}
+		
+		outputFile = Paths.get(path + ".decrypted");
+		Files.write(outputFile, fileArray);
+	 }
+
+
+
+	 static int getInput(String[] pathPointer) throws IOException{
 		int input;
 		String path, action = "";
 				
@@ -31,22 +94,24 @@ public class Encryptor {
 		if(input == 1){
 			action = "encryption";
 			printFilePath(action,path);
+			pathPointer[0] = path;
+			return 1;
 		}
 		else if(input == 0){
 			action = "decryption";
 			printFilePath(action,path);
+			pathPointer[0] = path;
+			return 0;
 		}
-		else{
-			System.out.println("Not a valid mode - only 1 for encryption / 0 for decryption");
-		}
+		return -1;
 	}
 	
-	private static void printFilePath(String action, String path){
+	 static void printFilePath(String action, String path){
 		assert(action.equals(null) || path.equals(null));
 		
 		System.out.println(action + " simulation of file " + path);
 	}
-	public static String isValidFilePath (String path) throws IOException{
+	 static String isValidFilePath (String path) throws IOException{
 		File f;
 		boolean isValid = false;
 		
@@ -62,6 +127,15 @@ public class Encryptor {
 			}
 		}
 		return path;
+	}
+	
+	 static byte generateRandomByte(){
+		int max,min;
+		Random rnd;
+		max = 127;
+		min = -128;
+		rnd = new Random();
+		return (byte) (rnd.nextInt(max - min + 1) + min);
 	}
 	
 	
@@ -90,6 +164,9 @@ public class Encryptor {
 
 		public int nextInt() {
 			return Integer.parseInt(next());
+		}
+		public byte nextByte() {
+			return (byte) Integer.parseInt(next());
 		}
 	}
 }
