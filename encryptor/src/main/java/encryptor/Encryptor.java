@@ -37,6 +37,7 @@ public class Encryptor {
 	
 	 static void encryption(String path) throws IOException {
 		byte key;
+		int mode = 1;
 		byte[] fileArray;
 		Path inputFile, outputFile;
 		
@@ -47,33 +48,45 @@ public class Encryptor {
 		System.out.println("the key for encryption is: " + key);
 		
 		for (int i = 0; i < fileArray.length; i++) {
-			fileArray[i] = caesarCipherOnBytes(fileArray[i], key);
+			fileArray[i] = caesarCipherOnBytes(fileArray[i], key, mode);
 		}
 		
 		outputFile = Paths.get(path + ".encrypted");
 		Files.write(outputFile, fileArray);
 	}
 	
-	static byte caesarCipherOnBytes(byte b, byte key){
-		return (byte) (b + key);
-	
+	static byte caesarCipherOnBytes(byte b, byte key,int mode){
+		//encryption
+		if (mode == 1){
+			return (byte) (b + key);
+		}
+		//decryption
+		else{
+			return (byte) (b - key);
+		}
 	}
 
 	 static void decreption(String path) throws IOException {
+		System.out.println(path);
 		byte key; 
 		byte[] fileArray;
+		int mode = 0;
+		String[] pathArr;
 		Path inputFile,outputFile;
-		System.out.println("Enter the key for decreption - should be in range (-2^7 - 2^7-1");
+		
+		pathArr = path.split("\\.");
+		
+		System.out.println("Enter the key for decreption - should be the key you use for encryption");
 		key = in.nextByte();
 		
 		inputFile = Paths.get(path);
 		fileArray = Files.readAllBytes(inputFile);
 		
 		for (int i = 0; i < fileArray.length; i++) {
-			fileArray[i] = caesarCipherOnBytes(fileArray[i], key);
+			fileArray[i] = caesarCipherOnBytes(fileArray[i], key,mode);
 		}
 		
-		outputFile = Paths.get(path + ".decrypted");
+		outputFile = Paths.get(pathArr[0] + "_decrypted." + pathArr[1]);
 		Files.write(outputFile, fileArray);
 	 }
 
