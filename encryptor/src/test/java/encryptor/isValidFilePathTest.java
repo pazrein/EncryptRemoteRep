@@ -10,9 +10,9 @@ public class isValidFilePathTest {
 
 	@Test
 	public void test() throws IOException {
-		Encryptor enc = new Encryptor();
+		Main enc = new Main();
 		String path = "C:\\Users\\Paz\\git\\LocalEncryptorRepository\\encryptor\\pom.xml";
-		assertTrue(Encryptor.isValidFilePath(path).equals(path));
+		assertTrue(Main.isValidFilePath(path).equals(path));
 	}
 
 }
