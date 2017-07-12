@@ -16,7 +16,8 @@ public @Data class Decryption {
 	private byte[] fileArray;
 	private int algorithm;
 	private String[] pathArr;
-	
+	private int MAX_VALUE = 127;
+	private int MIN_VALUE = -128;
 	
 	
 	
@@ -57,7 +58,12 @@ public @Data class Decryption {
 		case 1:
 			caesarCipher();
 			break;
-
+		case 2:
+			XOR();
+			break;
+		case 3:
+			Multiplication();
+			break;
 		default:
 			break;
 		}
@@ -74,6 +80,32 @@ public @Data class Decryption {
 	
 	private byte caesarCipherPerByte(byte b, byte key){
 		return (byte) (b - key);
+	}
+	
+	private void XOR() {
+		for (int i = 0; i < fileArray.length; i++) {
+			fileArray[i] = XORPerByte(fileArray[i], key);
+		}
+	}
+	
+	private byte XORPerByte(byte b, byte key){
+		return (byte) (b ^ key);
+	}
+	
+	private void Multiplication(){
+		for (int i = MIN_VALUE; i <= MAX_VALUE; i++) {
+			if(key * i == 1){
+				key = (byte) i;
+				break;
+			}
+		}
+		for (int i = 0; i < fileArray.length; i++) {
+			fileArray[i] = MultiPerByte(fileArray[i], key);
+		}
+	}
+	
+	private byte MultiPerByte(byte b, byte key){
+		return (byte) (b * key);
 	}
 
 }
