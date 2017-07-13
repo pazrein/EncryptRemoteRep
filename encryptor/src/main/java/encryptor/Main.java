@@ -40,7 +40,7 @@ public class Main {
 	 static void decreption(String path) throws IOException {
 		 Decryption dec = new Decryption(path);
 		 dec.inputKey();
-		 dec.chooseEncAlgo();
+		 dec.chooseDecAlgo();
 		 dec.decrypt();
 		 dec.write();
 	 }

@@ -7,42 +7,25 @@ import java.nio.file.Paths;
 
 import lombok.Data;
 
-public @Data class Decryption {
+public @Data class Decryption extends AbstractFileManipulation {
 	private static InputReader in = new InputReader();
-	private String path;
-	private byte key;
-	private Path inputFile;
-	private Path outputFile;
-	private byte[] fileArray;
-	private int algorithm;
 	private String[] pathArr;
-	private int MAX_VALUE = 127;
-	private int MIN_VALUE = -128;
-	
-	
-	
+
 	public Decryption(String path) throws IOException {
-		this.path = path;
+		super(path);
 		this.pathArr = path.split("\\.");
-		this.key = 0;
-		this.inputFile = Paths.get(path);
 		this.outputFile = Paths.get(pathArr[0] + "_decrypted." + pathArr[1]);
-		this.fileArray = Files.readAllBytes(inputFile);
-		this.algorithm = -1;
-		
 	}
 	
-	void chooseEncAlgo() {
+	void chooseDecAlgo() {
 		boolean firstTry = true;
 		while (!(algorithm > 0 && algorithm < 4)) {
 			System.out.println("Choose your decryption algorithm *YOU USED* from the following list" +
-			"\n 1 for caesarCipher"
-			+ "\n 2 for XOR " + 
-			"\n 3 for Multiplication");
+					 chooseAlgoFromListStringToPrint());
 			
 			algorithm = in.nextInt();
 			if (!firstTry){
-				System.out.println("Pick a number between 1 to 3 only");
+				System.out.println("Pick a number between 1 to 6 only");
 			}
 			firstTry = false;
 		}
@@ -54,45 +37,16 @@ public @Data class Decryption {
 	}
 	
 	void decrypt(){
-		switch (algorithm) {
-		case 1:
-			caesarCipher();
-			break;
-		case 2:
-			XOR();
-			break;
-		case 3:
-			Multiplication();
-			break;
-		default:
-			break;
-		}
+		chooseAlgoToActivate(algorithm);
 	} 
 	
-	void write() throws IOException{
-		Files.write(outputFile, fileArray);
-	}
-	private void caesarCipher() {
-		for (int i = 0; i < fileArray.length; i++) {
-			fileArray[i] = caesarCipherPerByte(fileArray[i], key);
-		}
-	}
-	
-	private byte caesarCipherPerByte(byte b, byte key){
+	@Override
+	byte caesarCipherPerByte(byte b, byte key){
 		return (byte) (b - key);
 	}
 	
-	private void XOR() {
-		for (int i = 0; i < fileArray.length; i++) {
-			fileArray[i] = XORPerByte(fileArray[i], key);
-		}
-	}
-	
-	private byte XORPerByte(byte b, byte key){
-		return (byte) (b ^ key);
-	}
-	
-	private void Multiplication(){
+	@Override
+	void Multiplication(){
 		for (int i = MIN_VALUE; i <= MAX_VALUE; i++) {
 			if(key * i == 1){
 				key = (byte) i;
@@ -103,9 +57,43 @@ public @Data class Decryption {
 			fileArray[i] = MultiPerByte(fileArray[i], key);
 		}
 	}
-	
-	private byte MultiPerByte(byte b, byte key){
-		return (byte) (b * key);
+
+	@Override
+	void Double() {
+		int algofirst, algosec;
+
+		algofirst = 0; // TODO get them
+		algosec = 0; // TODO get them
+		
+		for (int i = 0; i < fileArray.length; i++) {
+			fileArray[i] = algoPerByte(algofirst, fileArray[i], key);
+			fileArray[i] = algoPerByte(algosec, fileArray[i], secKey);
+		}
 	}
 
+	@Override
+	void Reverse() {
+		int algo; // TODO get them
+		algo = 0;
+		for (int i = fileArray.length - 1; i > -1; i--) {
+			fileArray[i] = algoPerByte(algo, fileArray[i], key);
+		}
+	}
+
+	@Override
+	void Split() {
+		int algoOdd, algoEven;
+
+		algoOdd = 0;// TODO get them
+		algoEven = 0;// TODO get them
+
+		for (int i = 0; i < fileArray.length; i++) {
+			if (i % 2 != 0) {
+				fileArray[i] = algoPerByte(algoOdd, fileArray[i], key);
+			} 
+			else {
+				fileArray[i] = algoPerByte(algoEven, fileArray[i], secKey);
+			}
+		}
+	}
 }

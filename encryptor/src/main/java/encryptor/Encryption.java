@@ -8,108 +8,71 @@ import java.util.Random;
 import encryptor.InputReader;
 import lombok.Data;
 
-public @Data class Encryption {
+public @Data class Encryption extends AbstractFileManipulation {
 	private static InputReader in = new InputReader();
-	private String path;
-	private byte key;
-	private byte secKey;
-	private Path inputFile;
-	private Path outputFile;
-	private byte[] fileArray;
-	private int algorithm;
-	private int MAX_VALUE = 127;
-	private int MIN_VALUE = -128;
-	
-	
+
 
 	public Encryption(String path) throws IOException {
-		this.path = path;
+		super(path);
 		this.key = generateRandomByte();
 		this.secKey = generateRandomByte();
-		this.inputFile = Paths.get(path);
 		this.outputFile = Paths.get(path + ".encrypted"); 
-		this.fileArray = Files.readAllBytes(inputFile);
-		this.algorithm = -1;
+
 		
 	}
 	
 	void chooseEncAlgo() {
 		boolean firstTry = true;
-		while (!(algorithm > 0 && algorithm < 4)) {
-			System.out.println("Choose your encryption algorithm from the following list" +
-			"\n 1 for caesarCipher"
-			+ "\n 2 for XOR " + 
-			"\n 3 for Multiplication");
-			
+		while (!(algorithm > 0 && algorithm < 7)) {
+			System.out.println("Choose your encryption algorithm from the following list"
+					+  chooseAlgoFromListStringToPrint());
 			algorithm = in.nextInt();
 			if (!firstTry){
-				System.out.println("Pick a number between 1 to 3 only");
+				System.out.println("Pick a number between 1 to 6 only");
 			}
 			firstTry = false;
 		}
 	}
 	
 	void encrypt(){
-		switch (algorithm) {
-		case 1:
-			caesarCipher();
-			break;
-		case 2:
-			XOR();
-			break;
-		case 3:
-			Multiplication();
-			break;
-		case 4:
-			Double();
-			break;
-		case 5:
-			Reverse();
-			break;
-		case 6:
-			Split();
-			break;
+		chooseAlgoToActivate(algorithm);
+	}
+	
 
-		default:
-			break;
+	@Override
+	void Double() {
+		int algofirst, algosec;
+
+		algofirst = chooseAlgorithmRandomly();
+		algosec = chooseAlgorithmRandomly();
+		
+		for (int i = 0; i < fileArray.length; i++) {
+			fileArray[i] = algoPerByte(algofirst, fileArray[i], key);
+			fileArray[i] = algoPerByte(algosec, fileArray[i], secKey);
 		}
 	}
-	
-	void write() throws IOException{
-		Files.write(outputFile, fileArray);
+	@Override
+	void Reverse() {
+		int algo;
+		algo = chooseAlgorithmRandomly();
+		for (int i = fileArray.length - 1; i > -1; i--) {
+			fileArray[i] = algoPerByte(algo, fileArray[i], key);
+		}
 	}
-	
-	private void Reverse() {
-		// TODO Auto-generated method stub
-		
-	}
+	@Override
+	void Split() {
+		int algoOdd, algoEven;
 
-	private void Double() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void Split() {
-		int algoOdd,algoEven;
-		
 		algoOdd = chooseAlgorithmRandomly();
 		algoEven = chooseAlgorithmRandomly();
-		
-		
-		
-		
-	}
-	
-	private byte algoPerByte(int algo, byte b , byte k){
-		switch (algo) {
-		case 1:
-			return caesarCipherPerByte(b,k);
-		case 2:
-			return XORPerByte(b,k);
-		case 3:
-			return MultiPerByte(b,k);
-		default:
-			return 0;
+
+		for (int i = 0; i < fileArray.length; i++) {
+			if (i % 2 != 0) {
+				fileArray[i] = algoPerByte(algoOdd, fileArray[i], key);
+			} 
+			else {
+				fileArray[i] = algoPerByte(algoEven, fileArray[i], secKey);
+			}
 		}
 	}
 	
@@ -125,27 +88,14 @@ public @Data class Encryption {
 		return rnd.nextInt(4);
 	}
 
-	private void caesarCipher() {
-		for (int i = 0; i < fileArray.length; i++) {
-			fileArray[i] = caesarCipherPerByte(fileArray[i], key);
-		}
-	}
-	
-	private byte caesarCipherPerByte(byte b, byte key){
+
+	@Override
+	byte caesarCipherPerByte(byte b, byte key){
 		return (byte) (b + key);
 	}
 	
-	private void XOR() {
-		for (int i = 0; i < fileArray.length; i++) {
-			fileArray[i] = XORPerByte(fileArray[i], key);
-		}
-	}
-	
-	private byte XORPerByte(byte b, byte key){
-		return (byte) (b ^ key);
-	}
-	
-	private void Multiplication(){
+	@Override
+	void Multiplication(){
 		if (key % 2 == 0){
 			key++;
 			System.out.println("The chosen key was illegal for this algorithm."
@@ -156,13 +106,4 @@ public @Data class Encryption {
 			fileArray[i] = MultiPerByte(fileArray[i], key);
 		}
 	}
-	
-	private byte MultiPerByte(byte b, byte key){
-		return (byte) (b * key);
-	}
-		
-	
-	
-	
-
 }
