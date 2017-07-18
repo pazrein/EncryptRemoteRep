@@ -1,109 +1,72 @@
 package encryptor;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Random;
+import Algorithms.CaesarCipher;
+import Algorithms.DoubleAlgo;
+import Algorithms.Multiplication;
+import Algorithms.Reverse;
+import Algorithms.Split;
+import Algorithms.XOR;
 import encryptor.InputReader;
 import lombok.Data;
 
 public @Data class Encryption extends AbstractFileManipulation {
 	private static InputReader in = new InputReader();
 
-
 	public Encryption(String path) throws IOException {
 		super(path);
-		this.key = generateRandomByte();
-		this.secKey = generateRandomByte();
-		this.outputFile = Paths.get(path + ".encrypted"); 
-
-		
+		this.outputFile = Paths.get(path + ".encrypted");
 	}
-	
+
 	void chooseEncAlgo() {
 		boolean firstTry = true;
 		while (!(algorithm > 0 && algorithm < 7)) {
-			System.out.println("Choose your encryption algorithm from the following list"
-					+  chooseAlgoFromListStringToPrint());
+			System.out.println(
+					"Choose your encryption algorithm from the following list" + chooseAlgoFromListStringToPrint());
 			algorithm = in.nextInt();
-			if (!firstTry){
+			if (!firstTry) {
 				System.out.println("Pick a number between 1 to 6 only");
 			}
 			firstTry = false;
 		}
 	}
-	
-	void encrypt(){
+
+	void chooseAlgoToActivate(int algorithm) throws IOException {
+		switch (algorithm) {
+		case 1:
+			CaesarCipher cc = new CaesarCipher();
+			fileArray = cc.encrypt(key, fileArray);
+			break;
+		case 2:
+			XOR x = new XOR();
+			fileArray = x.encrypt(key, fileArray);
+			break;
+		case 3:
+			Multiplication m = new Multiplication();
+			fileArray = m.encrypt(key, fileArray);
+			break;
+		case 4:
+			DoubleAlgo d = new DoubleAlgo();
+			fileArray = d.encrypt(key, fileArray);
+			break;
+		case 5:
+			Reverse r = new Reverse();
+			fileArray = r.encrypt(key, fileArray);
+			break;
+		case 6:
+			Split s = new Split();
+			fileArray = s.encrypt(key, fileArray);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	void encrypt() throws IOException {
 		chooseAlgoToActivate(algorithm);
-	}
-	
-
-	@Override
-	void Double() {
-		int algofirst, algosec;
-
-		algofirst = chooseAlgorithmRandomly();
-		algosec = chooseAlgorithmRandomly();
-		
-		for (int i = 0; i < fileArray.length; i++) {
-			fileArray[i] = algoPerByte(algofirst, fileArray[i], key);
-			fileArray[i] = algoPerByte(algosec, fileArray[i], secKey);
-		}
-	}
-	@Override
-	void Reverse() {
-		int algo;
-		algo = chooseAlgorithmRandomly();
-		for (int i = fileArray.length - 1; i > -1; i--) {
-			fileArray[i] = algoPerByte(algo, fileArray[i], key);
-		}
-	}
-	@Override
-	void Split() {
-		int algoOdd, algoEven;
-
-		algoOdd = chooseAlgorithmRandomly();
-		algoEven = chooseAlgorithmRandomly();
-
-		for (int i = 0; i < fileArray.length; i++) {
-			if (i % 2 != 0) {
-				fileArray[i] = algoPerByte(algoOdd, fileArray[i], key);
-			} 
-			else {
-				fileArray[i] = algoPerByte(algoEven, fileArray[i], secKey);
-			}
-		}
-	}
-	
-	 private byte generateRandomByte(){
-		Random rnd;
-		rnd = new Random();
-		return (byte) (rnd.nextInt(MAX_VALUE - MIN_VALUE + 1) + MIN_VALUE);
-	}
-	 
-	private int chooseAlgorithmRandomly() {
-		Random rnd;
-		rnd = new Random();
-		return rnd.nextInt(4);
+		System.out.println("Encrypting.. ");
 	}
 
-
-	@Override
-	byte caesarCipherPerByte(byte b, byte key){
-		return (byte) (b + key);
-	}
-	
-	@Override
-	void Multiplication(){
-		if (key % 2 == 0){
-			key++;
-			System.out.println("The chosen key was illegal for this algorithm."
-					+ "\n The new key is: " + key);
-		}
-		
-		for (int i = 0; i < fileArray.length; i++) {
-			fileArray[i] = MultiPerByte(fileArray[i], key);
-		}
-	}
 }

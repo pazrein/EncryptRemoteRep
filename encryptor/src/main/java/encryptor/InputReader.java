@@ -13,9 +13,11 @@ public class InputReader {
 		reader = new BufferedReader(new InputStreamReader(System.in));
 		tokenizer = null;
 	}
+
 	public String nextLine() throws IOException {
 		return reader.readLine();
 	}
+
 	public String next() {
 		while (tokenizer == null || !tokenizer.hasMoreTokens()) {
 			try {
@@ -30,9 +32,8 @@ public class InputReader {
 	public int nextInt() {
 		return Integer.parseInt(next());
 	}
+
 	public byte nextByte() {
 		return (byte) Integer.parseInt(next());
 	}
 }
-
-
