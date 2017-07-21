@@ -26,22 +26,22 @@ public class Main {
 		
 		switch (type) {
 		case FILE:
-			path = isValidPath(path, 1);
+			path = isValidPath(path, FileType.FILE);
 			switch (operation) {
 			case ENCRYPT:
 				action = "encryption";
-				printFilePath(action, path,1);
+				printFilePath(action, path,FileType.FILE);
 				encryption(path);
 				break;
 			case DECRYPT:
 				action = "decryption";
-				printFilePath(action, path,1);
+				printFilePath(action, path,FileType.FILE);
 				decreption(path);
 				break;
 			}
 			break;
 		case DIR:
-			path = isValidPath(path, 0);
+			path = isValidPath(path, FileType.DIR);
 			System.out.println("For sync press 1");
 			System.out.println("For async press 0");
 			method = SynchronizationMethod.fromInt(in.nextInt());
@@ -50,12 +50,12 @@ public class Main {
 				switch (operation) {
 				case ENCRYPT:
 					action = "encryption";
-					printFilePath(action, path,0);
+					printFilePath(action, path,FileType.DIR);
 					System.out.println("DIR - SYNC - ENCRYPT"); //TODO
 					break;
 				case DECRYPT:
 					action = "decryption";
-					printFilePath(action, path,0);
+					printFilePath(action, path,FileType.DIR);
 					System.out.println("DIR - SYNC - DECRYPT"); //TODO
 					break;
 				}
@@ -65,12 +65,12 @@ public class Main {
 				switch (operation) {
 				case ENCRYPT:
 					action = "encryption";
-					printFilePath(action, path,0);
+					printFilePath(action, path,FileType.DIR);
 					System.out.println("DIR - ASYNC - ENCRYPT"); //TODO
 					break;
 				case DECRYPT:
 					action = "decryption";
-					printFilePath(action, path,0);
+					printFilePath(action, path,FileType.DIR);
 					System.out.println("DIR - ASYNC - DECRYPT"); //TODO
 					break;
 				}
@@ -96,29 +96,29 @@ public class Main {
 		dec.write();
 	}
 
-	static void printFilePath(String action, String path,int mode) {
-		assert (action.equals(null) || path.equals(null) || (mode != 1 && mode != 0));
+	static void printFilePath(String action, String path,FileType mode) {
+		assert (action.equals(null) || path.equals(null));
 		switch (mode) {
-		case 0:
+		case DIR:
 			System.out.println(action + " simulation of an entire directory " + path);
 			break;
-		case 1:
+		case FILE:
 			System.out.println(action + " simulation of file " + path);
 			break;
 
 		default:
-			break;
+			throw new IllegalArgumentException("In printFilePath " + mode + " is not a valid file type");
 		}
 		
 	}
 
-	static String isValidPath(String path, int mode) throws IOException {
+	static String isValidPath(String path, FileType mode) throws IOException {
 		File f;
 		boolean isValid = false;
 
 		while (!isValid) {
 			f = new File(path);
-			if (f.exists() && ((mode == 0 && f.isDirectory()) || (mode == 1 && !f.isDirectory()))) {
+			if (f.exists() && ((mode == FileType.DIR && f.isDirectory()) || (mode == FileType.FILE && !f.isDirectory()))) {
 				isValid = true;
 
 			}
