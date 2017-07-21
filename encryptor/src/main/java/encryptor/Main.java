@@ -6,26 +6,78 @@ import encryptor.InputReader;
 
 public class Main {
 	private static InputReader in = new InputReader();
-
+	
 	public static void main(String[] args) throws IOException {
-		int mode;
-		String[] pathPointer = new String[1];
-
-		mode = getInput(pathPointer);
-		switch (mode) {
-		case 1:
-			encryption(pathPointer[0]);
-
+		String path, action;
+		FileType type;
+		FileOperation operation;
+		SynchronizationMethod method;
+		
+		System.out.println("For encryption press 1");
+		System.out.println("For decryption press 0");
+		operation = FileOperation.fromInt(in.nextInt());
+				
+		System.out.println("For a file choose 1");
+		System.out.println("For an entire directory choose 0");
+		type = FileType.fromInt(in.nextInt());
+		
+		System.out.println("Enter path ");
+		path = in.nextLine();
+		
+		switch (type) {
+		case FILE:
+			path = isValidPath(path, 1);
+			switch (operation) {
+			case ENCRYPT:
+				action = "encryption";
+				printFilePath(action, path,1);
+				encryption(path);
+				break;
+			case DECRYPT:
+				action = "decryption";
+				printFilePath(action, path,1);
+				decreption(path);
+				break;
+			}
 			break;
-		case 0:
-			decreption(pathPointer[0]);
+		case DIR:
+			path = isValidPath(path, 0);
+			System.out.println("For sync press 1");
+			System.out.println("For async press 0");
+			method = SynchronizationMethod.fromInt(in.nextInt());
+			switch (method) {
+			case SYNC:
+				switch (operation) {
+				case ENCRYPT:
+					action = "encryption";
+					printFilePath(action, path,0);
+					System.out.println("DIR - SYNC - ENCRYPT"); //TODO
+					break;
+				case DECRYPT:
+					action = "decryption";
+					printFilePath(action, path,0);
+					System.out.println("DIR - SYNC - DECRYPT"); //TODO
+					break;
+				}
+				break;
 
+			case ASYNC:
+				switch (operation) {
+				case ENCRYPT:
+					action = "encryption";
+					printFilePath(action, path,0);
+					System.out.println("DIR - ASYNC - ENCRYPT"); //TODO
+					break;
+				case DECRYPT:
+					action = "decryption";
+					printFilePath(action, path,0);
+					System.out.println("DIR - ASYNC - DECRYPT"); //TODO
+					break;
+				}
+				break;
+			}
 			break;
-		default:
-			System.out.println("Not a valid mode - only 1 for encryption / 0 for decryption");
-			return;
 		}
-
 	}
 
 	static void encryption(String path) throws IOException {
@@ -44,49 +96,35 @@ public class Main {
 		dec.write();
 	}
 
-	static int getInput(String[] pathPointer) throws IOException {
-		int input;
-		String path, action = "";
+	static void printFilePath(String action, String path,int mode) {
+		assert (action.equals(null) || path.equals(null) || (mode != 1 && mode != 0));
+		switch (mode) {
+		case 0:
+			System.out.println(action + " simulation of an entire directory " + path);
+			break;
+		case 1:
+			System.out.println(action + " simulation of file " + path);
+			break;
 
-		System.out.println("For encryption press 1");
-		System.out.println("For decryption press 0");
-		input = in.nextInt();
-
-		System.out.println("Enter file path ");
-		path = in.nextLine();
-		path = isValidFilePath(path);
-
-		if (input == 1) {
-			action = "encryption";
-			printFilePath(action, path);
-			pathPointer[0] = path;
-			return 1;
-		} else if (input == 0) {
-			action = "decryption";
-			printFilePath(action, path);
-			pathPointer[0] = path;
-			return 0;
+		default:
+			break;
 		}
-		return -1;
+		
 	}
 
-	static void printFilePath(String action, String path) {
-		assert (action.equals(null) || path.equals(null));
-
-		System.out.println(action + " simulation of file " + path);
-	}
-
-	static String isValidFilePath(String path) throws IOException {
+	static String isValidPath(String path, int mode) throws IOException {
 		File f;
 		boolean isValid = false;
 
 		while (!isValid) {
 			f = new File(path);
-			if (f.exists() && !f.isDirectory()) {
+			if (f.exists() && ((mode == 0 && f.isDirectory()) || (mode == 1 && !f.isDirectory()))) {
 				isValid = true;
-			} else {
-				System.out.println("Not a valid file path - try again");
-				System.out.println("Enter file path ");
+
+			}
+			else {
+				System.out.println("Not a valid path - try again");
+				System.out.println("Enter path ");
 				path = in.nextLine();
 			}
 		}

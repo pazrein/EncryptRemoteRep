@@ -7,6 +7,7 @@ public class Multiplication extends AlgorithmAbstract {
 	@Override
 	public byte[] encrypt(byte key, byte[] array) throws IOException {
 		if (key % 2 == 0) {
+			//throw new IllegalArgumentException("The chosen key was illegal for this algorithm.");
 			key++;
 			System.out.println("The chosen key was illegal for this algorithm." + "\n The new key is: " + key);
 		}
