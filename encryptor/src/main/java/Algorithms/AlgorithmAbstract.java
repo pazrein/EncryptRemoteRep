@@ -1,14 +1,7 @@
 package Algorithms;
 
-import java.io.DataInputStream;
-import encryptor.*;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.rmi.server.UID;
-import java.util.Random;
+
 
 import encryptor.FileOperation;
 
@@ -65,11 +58,6 @@ public abstract class AlgorithmAbstract implements Algorithm {
 
 	public abstract byte decryptPerByte(byte b, byte key);
 
-	// byte chooseAlgorithmRandomly() {
-	// Random rnd;
-	// rnd = new Random();
-	// return (byte) (rnd.nextInt(3) + 1);
-	// }
 
 	byte[] doAlgo(byte key, int algo, byte[] array) throws IOException {
 		switch (algo) {
@@ -87,22 +75,5 @@ public abstract class AlgorithmAbstract implements Algorithm {
 		}
 	}
 
-	// byte generateRandomKey() {
-	// Random rnd;
-	// rnd = new Random();
-	// return (byte) (rnd.nextInt(MAX_VALUE - MIN_VALUE + 1) + MIN_VALUE);
-	// }
-
-	// void writeKeysToFile(byte key, byte secKey, int algo1, int algo2) throws
-	// IOException {
-	// FileOutputStream fos = new FileOutputStream("key.bin");
-	// DataOutputStream dos = new DataOutputStream(fos);
-	// dos.writeByte(key);
-	// dos.writeByte(secKey);
-	// dos.writeInt(algo1);
-	// dos.writeInt(algo2);
-	// dos.close();
-	// fos.close();
-	// }
 
 }

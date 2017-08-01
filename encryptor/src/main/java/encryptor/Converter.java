@@ -11,17 +11,59 @@ import org.apache.commons.io.FileUtils;
 
 public class Converter {
 	private static InputReader in = new InputReader();
-	int algorithm;
-	Path inputFile ,outputFile;
-	byte[] fileArray;
-	UserInput UI;
-	AlgoFields AF;
+	private int algorithm;
+	private Path inputFile ,outputFile;
+	private byte[] fileArray;
+	private UserInput UI;
+	private AlgoFields AF;
 		
 
 	public Converter(UserInput UI) throws IOException {
 		this.UI = UI;
 		this.AF = new AlgoFields(UI.operation);
 	}
+	
+	public void convert(UserInput UI) throws IOException{
+		switch (UI.type) {
+		case FILE:
+			switch (UI.operation) {
+			case encryption:
+				encryptFile();
+				break;
+			case decryption:
+				decryptFile();
+				break;
+			}
+			break;
+		case DIR:
+			switch (UI.method) {
+			case SYNC:
+				switch (UI.operation) {
+				case encryption:
+					encryptDirSync(UI.path);
+					break;
+				case decryption:
+					decryptDirSync(UI.path);
+					break;
+				}
+				break;
+
+			case ASYNC:
+				switch (UI.operation) {
+				case encryption:
+					encryptDirASync(UI.path);
+
+					break;
+				case decryption:
+					decryptDirASync(UI.path);
+					break;
+				}
+				break;
+			}
+			break;
+		}
+	}
+	
 	
 	private void decryptDirASync(String path) {
 		// TODO Auto-generated method stub
@@ -102,11 +144,11 @@ public class Converter {
 		
 	}
 	
-	void write() throws IOException {
+	private void write() throws IOException {
 		Files.write(outputFile, fileArray);
 	}
 	
-	void fileToByteArr(String path){
+	private void fileToByteArr(String path){
 		this.inputFile = Paths.get(path);
 		try {
 			fileArray = Files.readAllBytes(inputFile);
@@ -117,53 +159,13 @@ public class Converter {
 		}
 	} 
 	
-	void convert(UserInput UI) throws IOException{
-		switch (UI.type) {
-		case FILE:
-			switch (UI.operation) {
-			case encryption:
-				encryptFile();
-				break;
-			case decryption:
-				decryptFile();
-				break;
-			}
-			break;
-		case DIR:
-			switch (UI.method) {
-			case SYNC:
-				switch (UI.operation) {
-				case encryption:
-					encryptDirSync(UI.path);
-					break;
-				case decryption:
-					decryptDirSync(UI.path);
-					break;
-				}
-				break;
-
-			case ASYNC:
-				switch (UI.operation) {
-				case encryption:
-					encryptDirASync(UI.path);
-
-					break;
-				case decryption:
-					decryptDirASync(UI.path);
-					break;
-				}
-				break;
-			}
-			break;
-		}
-	}
 	
-	String chooseAlgoFromListStringToPrint() {
+	private String chooseAlgoFromListStringToPrint() {
 		return "\n 1 for caesarCipher" + "\n 2 for XOR " + "\n 3 for Multiplication" + "\n 4 for Double"
 				+ "\n 5 for Reverse" + "\n 6 for Split";
 	}
 	
-	void chooseAlgo() {
+	private void chooseAlgo() {
 		boolean firstTry = true;
 		while (!(algorithm > 0 && algorithm < 7)) {
 			System.out.println(
@@ -176,7 +178,7 @@ public class Converter {
 		}
 	}
 	
-	void activateAlgo(int algorithm) throws IOException {
+	private void activateAlgo(int algorithm) throws IOException {
 		switch (algorithm) {
 		case 1:
 			CaesarCipher cc = new CaesarCipher(UI.operation, AF);
