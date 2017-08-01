@@ -4,25 +4,31 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import encryptor.FileOperation;
+
 public class Reverse extends AlgorithmAbstract {
+	
+	public Reverse(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+		super(operation, AF);
+	}
+	
+	public Reverse (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
+		super(operation, key, secKey, algo1, algo2);
+	}
 
 	@Override
-	public byte[] encrypt(byte key, byte[] array) throws IOException {
-		int algo;
-
-		algo = chooseAlgorithmRandomly();
-		key = generateRandomByte();
+	public byte[] encrypt(byte[] array) throws IOException {
 		ArrayUtils.reverse(array);
 
-		array = encAlgo(key, algo, array);
+		array = doAlgo(key, algo1, array);
 
-		writeKeysToFile(key, (byte) 0, algo, 0);// need to be the last line
+//		writeKeysToFile(key, secKey, algo1, algo2);
 		return array;
 
 	}
 
-	public byte[] decrypt(byte key, int algo, byte[] array) {
-		array = decAlgo(key, algo, array);
+	public byte[] decrypt(byte[] array) throws IOException {
+		array = doAlgo(key, algo1, array);
 		ArrayUtils.reverse(array);
 		return array;
 	}

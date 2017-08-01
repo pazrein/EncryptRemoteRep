@@ -2,28 +2,31 @@ package Algorithms;
 
 import java.io.IOException;
 
+import encryptor.FileOperation;
+
 public class DoubleAlgo extends AlgorithmAbstract {
 
+	public DoubleAlgo(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+		super(operation, AF);
+	}
+	
+	public DoubleAlgo (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
+		super(operation, key, secKey, algo1, algo2);
+	}
+
 	@Override
-	public byte[] encrypt(byte key, byte[] array) throws IOException {
-		int algo1, algo2;
-		byte key1, key2;
+	public byte[] encrypt(byte[] array) throws IOException {
+						
+		array = doAlgo(key, algo1, array);
+		array = doAlgo(secKey, algo2, array);
 
-		algo1 = chooseAlgorithmRandomly();
-		key1 = generateRandomByte();
-		algo2 = chooseAlgorithmRandomly();
-		key2 = generateRandomByte();
-
-		array = encAlgo(key1, algo1, array);
-		array = encAlgo(key2, algo2, array);
-
-		writeKeysToFile(key1, key2, algo1, algo2);// need to be the last line
+//		writeKeysToFile(key, secKey, algo1, algo2);
 		return array;
 	}
 
-	public byte[] decrypt(byte key1, byte key2, int algo1, int algo2, byte[] array) {
-		array = decAlgo(key1, algo1, array);
-		array = decAlgo(key2, algo2, array);
+	public byte[] decrypt(byte[] array) throws IOException {
+		array = doAlgo(secKey, algo2, array);
+		array = doAlgo(key, algo1, array);
 		return array;
 	}
 

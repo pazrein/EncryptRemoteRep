@@ -2,30 +2,36 @@ package Algorithms;
 
 import java.io.IOException;
 
+import encryptor.FileOperation;
+
 public class Multiplication extends AlgorithmAbstract {
 
-	@Override
-	public byte[] encrypt(byte key, byte[] array) throws IOException {
-		if (key % 2 == 0) {
-			//throw new IllegalArgumentException("The chosen key was illegal for this algorithm.");
-			key++;
-			System.out.println("The chosen key was illegal for this algorithm." + "\n The new key is: " + key);
-		}
-
-		writeKeysToFile(key, (byte) 0, 0, 0);
-
-		return super.encrypt(key, array);
+	public Multiplication(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+		super(operation, AF);
+	}
+	
+	public Multiplication (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
+		super(operation, key, secKey, algo1, algo2);
 	}
 
 	@Override
-	public byte[] decrypt(byte key, byte[] array) {
+	public byte[] encrypt(byte[] array) throws IOException{
+		if (key % 2 == 0) {
+			throw new IllegalArgumentException("The chosen key was illegal for this algorithm.");
+		}
+
+		return super.encrypt(array);
+	}
+
+	@Override
+	public byte[] decrypt(byte[] array) throws IOException {
 		for (int i = MIN_VALUE; i <= MAX_VALUE; i++) {
 			if (decryptPerByte((byte) i, key) == (byte) 1) {
 				key = (byte) i;
 				break;
 			}
 		}
-		return super.decrypt(key, array);
+		return super.decrypt(array);
 	}
 
 	@Override

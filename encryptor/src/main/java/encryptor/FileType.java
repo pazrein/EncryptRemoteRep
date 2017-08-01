@@ -6,9 +6,11 @@ public @Getter enum FileType {
 	FILE(1), DIR(0);
 
 	private int type;
+	
 
 	private FileType(int ft) {
 		this.type = ft;
+		
 	}
 
 	public static FileType fromInt(int ft) {

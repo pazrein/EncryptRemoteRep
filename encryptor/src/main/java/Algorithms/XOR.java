@@ -2,11 +2,15 @@ package Algorithms;
 
 import java.io.IOException;
 
+import encryptor.FileOperation;
+
 public class XOR extends AlgorithmAbstract {
-	@Override
-	public byte[] encrypt(byte key, byte[] array) throws IOException {
-		writeKeysToFile(key, (byte) 0, 0, 0);
-		return super.encrypt(key, array);
+	public XOR(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+		super(operation, AF);
+	}
+	
+	public XOR (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
+		super(operation, key, secKey, algo1, algo2);
 	}
 
 	@Override

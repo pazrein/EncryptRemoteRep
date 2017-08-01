@@ -17,5 +17,17 @@ public enum SynchronizationMethod {
 		}
 		throw new IllegalArgumentException("No constant with method " + meth + " found");
 	}
+	
+	public String toString(){
+		if (method == 1){
+			return "Sync";
+		}
+		else if(method == 0){
+			return "ASync";
+		}
+		else{
+			throw new IllegalArgumentException("No constant with method " + method + " found in toString");
+		}
+	}
 
 }

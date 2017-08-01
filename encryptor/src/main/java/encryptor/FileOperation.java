@@ -3,7 +3,7 @@ package encryptor;
 import lombok.Getter;
 
 public @Getter enum FileOperation {
-	ENCRYPT(1), DECRYPT(0);
+	encryption(1), decryption(0);
 
 	private int operation;
 
@@ -19,5 +19,16 @@ public @Getter enum FileOperation {
 		}
 		throw new IllegalArgumentException("No constant with operation " + op + " found");
 	}
-
+	
+	public String toString(){
+		if (operation == 1){
+			return "encryption";
+		}
+		else if(operation == 0){
+			return "decryption";
+		}
+		else{
+			throw new IllegalArgumentException("No constant with operation " + operation + " found in toString");
+		}
+	}
 }
