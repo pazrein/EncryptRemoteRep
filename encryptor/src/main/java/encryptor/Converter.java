@@ -1,15 +1,18 @@
 package encryptor;
 import Algorithms.*;
+import lombok.Data;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+
 import org.apache.commons.io.FileUtils;
 
 
-public class Converter {
+public @Data class Converter {
 	private static InputReader in = new InputReader();
 	private int algorithm;
 	private Path inputFile ,outputFile;
@@ -22,6 +25,11 @@ public class Converter {
 		this.UI = UI;
 		this.AF = new AlgoFields(UI.operation);
 	}
+	public Converter(UserInput UI, AlgoFields AF) throws IOException {
+		this.UI = UI;
+		this.AF = AF;
+	}
+	
 	
 	public void convert(UserInput UI) throws IOException{
 		switch (UI.type) {
@@ -64,14 +72,47 @@ public class Converter {
 		}
 	}
 	
-	
-	private void decryptDirASync(String path) {
-		// TODO Auto-generated method stub
+		
+	private void encryptDirASync(String path) throws IOException {
+		String newDirName = UI.path + "\\encrypted";
+		File newDir = new File(newDirName);
+		FileUtils.forceMkdir(newDir);
+		FileUtils.cleanDirectory(newDir);
+		File[] files = new File(UI.path).listFiles();
+		
+    	chooseAlgo();
+    	System.out.println("Encrypting.. ");
+    	
+    	Thread [] threadArr = new Thread [files.length];
+    	for (int i = 0; i < threadArr.length; i++) {
+			threadArr[i] = new Thread(new Runner(UI, AF, algorithm, files[i]));
+		}
+    	for (int i = 0; i < threadArr.length; i++) {
+			threadArr[i].start();
+		}
+    	System.out.println("Done");
 		
 	}
-
-	private void encryptDirASync(String path) {
-		// TODO Auto-generated method stub
+	
+	private void decryptDirASync(String path) throws IOException {
+		String newDirName = UI.path + "\\decrypted";
+		File newDir = new File(newDirName);
+		FileUtils.forceMkdir(newDir);
+		FileUtils.cleanDirectory(newDir);
+		File[] files = new File(UI.path + "\\encrypted").listFiles();
+		
+    	chooseAlgo();
+    	System.out.println("Decrypting.. ");
+    	
+	    for (File file : files) {
+	        if (!file.isDirectory()) {
+	        	fileToByteArr(UI.path + "\\encrypted\\" + file.getName());
+	        	activateAlgo(algorithm);
+	        	this.outputFile = Paths.get(newDirName + "\\" + file.getName());
+	        	write();
+	        }
+	    }
+	    System.out.println("Done");
 		
 	}
 
@@ -144,11 +185,11 @@ public class Converter {
 		
 	}
 	
-	private void write() throws IOException {
+	void write() throws IOException {
 		Files.write(outputFile, fileArray);
 	}
 	
-	private void fileToByteArr(String path){
+	void fileToByteArr(String path){
 		this.inputFile = Paths.get(path);
 		try {
 			fileArray = Files.readAllBytes(inputFile);
@@ -178,7 +219,7 @@ public class Converter {
 		}
 	}
 	
-	private void activateAlgo(int algorithm) throws IOException {
+	void activateAlgo(int algorithm) throws IOException {
 		switch (algorithm) {
 		case 1:
 			CaesarCipher cc = new CaesarCipher(UI.operation, AF);
@@ -208,7 +249,50 @@ public class Converter {
 			throw new IllegalArgumentException("No algorithm with number " + algorithm + " exist");
 		}
 	}
+}
+
+class Runner implements Runnable {
+	int algorithm;
+	File file;
+	UserInput UI;
+	AlgoFields AF;
 
 	
-
+	public Runner(UserInput UI, AlgoFields AF, int algorithm, File file) {
+		this.UI = UI;
+		this.AF = AF;
+		this.algorithm = algorithm;
+		this.file = file;
+	}
+	public void run() {
+		String newDirName;
+		Converter c;
+		
+		if (UI.operation == FileOperation.encryption){
+			newDirName = UI.path + "\\encrypted";
+		}
+		else{
+			newDirName = UI.path + "\\decrypted";
+		}
+		try {
+			c = new Converter(UI, AF);
+			c.setAlgorithm(algorithm);
+	        if (!file.isDirectory()) {
+	    		if (UI.operation == FileOperation.encryption){
+	    			c.fileToByteArr(UI.path + "\\" + file.getName());
+	    		}
+	    		else{
+	    			c.fileToByteArr(UI.path + "\\encrypted\\" + file.getName());
+	    		}
+	        	c.activateAlgo(algorithm);
+	        	c.setOutputFile(Paths.get(newDirName + "\\" + file.getName())); ;
+	        	c.write();
+	       }
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(0);
+		}
+	}
 }
+
+

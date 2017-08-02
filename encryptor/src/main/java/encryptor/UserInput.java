@@ -83,6 +83,7 @@ public class UserInput {
 		} catch (IOException e) {
 			System.out.println("Failed to read path");
 			e.printStackTrace();
+			path = "";
 		}
 	}
 	
