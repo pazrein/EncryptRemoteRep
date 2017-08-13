@@ -3,80 +3,73 @@ package encryptor;
 import java.io.File;
 import java.io.IOException;
 
-public class UserInput {
-	FileType type;
-	FileOperation operation;
-	SynchronizationMethod method;
-	String path;
-	private static InputReader in = new InputReader();
-	
+import lombok.Getter;
+
+public @Getter class UserInput {
+	private FileType type;
+	private FileOperation operation;
+	private SynchronizationMethod method;
+	private String path;
+	static InputReader in = new InputReader();
+
 	public UserInput() {
-		System.out.println("For encryption press 1");
-		System.out.println("For decryption press 0");
-		operation = FileOperation.fromInt(in.nextInt());
-				
-		System.out.println("For a file choose 1");
-		System.out.println("For an entire directory choose 0");
-		type = FileType.fromInt(in.nextInt());
-		
-		if(type == FileType.DIR){
-			System.out.println("For sync press 1");
-			System.out.println("For async press 0");
-			method = SynchronizationMethod.fromInt(in.nextInt());
-		}
-		
-		 getPath();
+		// Dont need to do anything
 	}
-	
-	public boolean isValidPath(){
+
+	public void getInput() {
+		getDataFeatures();
+		if (!isValidPath()) {
+			throw new IllegalArgumentException("Failed to enter path more than 3 times");
+		}
+		printFilePath();
+	}
+
+	// Private-Methods
+
+	boolean isValidPath() {
 		File f;
-		// You have 2 more tries to enter a correct input;
-		for (int i = 0; i < 2; i++) {
+		// You have 3 tries to enter a correct input (first on
+		for (int i = 0; i < 3; i++) {
+			getPathFromUser();
 			f = new File(path);
-			if (f.exists()){
+			if (f.exists()) {
 				switch (type) {
 				case FILE:
-					if (!f.isDirectory()){
+					if (!f.isDirectory()) {
 						return true;
-					}
-					else{
+					} else {
 						System.out.println("The file: " + path + " is not a file");
 					}
 					break;
 
 				case DIR:
-					if (f.isDirectory()){
+					if (f.isDirectory()) {
 						return true;
-					}
-					else{
-						System.out.println("The file: " + path + " is not a directory");	
+					} else {
+						System.out.println("The file: " + path + " is not a directory");
 					}
 					break;
 				}
-			}
-			else{
+			} else {
 				System.out.println("The file: " + path + " does not exists");
 			}
-			
-			getPath();
 		}
 		return false;
 	}
-	
-	public void printFilePath(){
+
+	private void printFilePath() {
 		switch (type) {
 		case FILE:
 			System.out.println(operation.toString() + " simulation of file " + path);
 			break;
 		case DIR:
-			System.out.println(operation.toString() + " " + method.toString() + " " +  " simulation of directory " + path);
+			System.out
+					.println(operation.toString() + " " + method.toString() + " " + " simulation of directory " + path);
 			break;
 		}
 	}
-	
-	//Private-Methods
-	
-	private void getPath(){
+
+	void getPathFromUser() {
 		System.out.println("Enter path ");
 		try {
 			path = in.nextLine();
@@ -86,5 +79,24 @@ public class UserInput {
 			path = "";
 		}
 	}
-	
+
+	void getDataFeatures() {
+		System.out.println("For encryption press -enc");
+		System.out.println("For decryption press -dec");
+		operation = FileOperation.fromString(in.next());
+
+		System.out.println("For a file choose -f");
+		System.out.println("For an entire directory choose -dir");
+		type = FileType.fromString(in.next());
+
+		if (type == FileType.DIR) {
+			System.out.println("For sync enter -s");
+			System.out.println("For async press -as");
+			method = SynchronizationMethod.fromFlag(in.next());
+		}
+		// Default SynchronizationMethod for file
+		else {
+			method = SynchronizationMethod.SYNC;
+		}
+	}
 }

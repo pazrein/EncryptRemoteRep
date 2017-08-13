@@ -3,19 +3,19 @@ package encryptor;
 import lombok.Getter;
 
 public @Getter enum FileType {
-	FILE(1), DIR(0);
+	FILE("-f"), DIR("-dir");
 
-	private int type;
+	private String type;
 	
 
-	private FileType(int ft) {
+	private FileType(String ft) {
 		this.type = ft;
 		
 	}
 
-	public static FileType fromInt(int ft) {
+	public static FileType fromString(String ft) {
 		for (FileType FT : FileType.values()) {
-			if (FT.type == ft) {
+			if (FT.type.equals(ft)) {
 				return FT;
 			}
 		}

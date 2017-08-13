@@ -1,17 +1,17 @@
 package encryptor;
 
 public enum SynchronizationMethod {
-	SYNC(1), ASYNC(0);
+	SYNC("-s"), ASYNC("-as");
 
-	private int method;
+	private String method;
 
-	private SynchronizationMethod(int meth) {
+	private SynchronizationMethod(String meth) {
 		this.method = meth;
 	}
 
-	public static SynchronizationMethod fromInt(int meth) {
+	public static SynchronizationMethod fromFlag(String meth) {
 		for (SynchronizationMethod SM : SynchronizationMethod.values()) {
-			if (SM.method == meth) {
+			if (SM.method.equals(meth)) {
 				return SM;
 			}
 		}
@@ -19,10 +19,10 @@ public enum SynchronizationMethod {
 	}
 	
 	public String toString(){
-		if (method == 1){
+		if (method.equals("-s")){
 			return "Sync";
 		}
-		else if(method == 0){
+		else if(method.equals("-as")){
 			return "ASync";
 		}
 		else{

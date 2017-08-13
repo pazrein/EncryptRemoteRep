@@ -1,6 +1,7 @@
 package encryptor;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
@@ -16,6 +17,10 @@ public class InputReader {
 
 	public String nextLine() throws IOException {
 		return reader.readLine();
+	}
+	
+	public void SetReader(ByteArrayInputStream bis) {
+		reader = new BufferedReader(new InputStreamReader(bis));
 	}
 
 	public String next() {

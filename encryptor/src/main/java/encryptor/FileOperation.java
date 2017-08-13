@@ -3,17 +3,17 @@ package encryptor;
 import lombok.Getter;
 
 public @Getter enum FileOperation {
-	encryption(1), decryption(0);
+	encryption("-enc"), decryption("-dec");
 
-	private int operation;
+	private String operation;
 
-	private FileOperation(int op) {
+	private FileOperation(String op) {
 		this.operation = op;
 	}
 
-	public static FileOperation fromInt(int op) {
+	public static FileOperation fromString(String op) {
 		for (FileOperation FO : FileOperation.values()) {
-			if (FO.operation == op) {
+			if (FO.operation.equals(op)) {
 				return FO;
 			}
 		}
@@ -21,10 +21,10 @@ public @Getter enum FileOperation {
 	}
 	
 	public String toString(){
-		if (operation == 1){
+		if (operation.equals("-enc")){
 			return "encryption";
 		}
-		else if(operation == 0){
+		else if(operation.equals("-dec")){
 			return "decryption";
 		}
 		else{

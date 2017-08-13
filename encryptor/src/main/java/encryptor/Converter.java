@@ -23,7 +23,7 @@ public @Data class Converter {
 
 	public Converter(UserInput UI) throws IOException {
 		this.UI = UI;
-		this.AF = new AlgoFields(UI.operation);
+		this.AF = new AlgoFields(UI.getOperation());
 	}
 	public Converter(UserInput UI, AlgoFields AF) throws IOException {
 		this.UI = UI;
@@ -32,9 +32,9 @@ public @Data class Converter {
 	
 	
 	public void convert(UserInput UI) throws IOException{
-		switch (UI.type) {
+		switch (UI.getType()) {
 		case FILE:
-			switch (UI.operation) {
+			switch (UI.getOperation()) {
 			case encryption:
 				encryptFile();
 				break;
@@ -44,26 +44,26 @@ public @Data class Converter {
 			}
 			break;
 		case DIR:
-			switch (UI.method) {
+			switch (UI.getMethod()) {
 			case SYNC:
-				switch (UI.operation) {
+				switch (UI.getOperation()) {
 				case encryption:
-					encryptDirSync(UI.path);
+					encryptDirSync(UI.getPath());
 					break;
 				case decryption:
-					decryptDirSync(UI.path);
+					decryptDirSync(UI.getPath());
 					break;
 				}
 				break;
 
 			case ASYNC:
-				switch (UI.operation) {
+				switch (UI.getOperation()) {
 				case encryption:
-					encryptDirASync(UI.path);
+					encryptDirASync(UI.getPath());
 
 					break;
 				case decryption:
-					decryptDirASync(UI.path);
+					decryptDirASync(UI.getPath());
 					break;
 				}
 				break;
@@ -74,14 +74,8 @@ public @Data class Converter {
 	
 		
 	private void encryptDirASync(String path) throws IOException {
-		String newDirName = UI.path + "\\encrypted";
-		File newDir = new File(newDirName);
-		FileUtils.forceMkdir(newDir);
-		FileUtils.cleanDirectory(newDir);
-		File[] files = new File(UI.path).listFiles();
-		
-    	chooseAlgo();
-    	System.out.println("Encrypting.. ");
+		File[] files = prepareDirectory(path);
+		System.out.println("Encrypting.. ");
     	
     	Thread [] threadArr = new Thread [files.length];
     	for (int i = 0; i < threadArr.length; i++) {
@@ -90,99 +84,69 @@ public @Data class Converter {
     	for (int i = 0; i < threadArr.length; i++) {
 			threadArr[i].start();
 		}
-    	System.out.println("Done");
-		
-	}
+    }
 	
 	private void decryptDirASync(String path) throws IOException {
-		String newDirName = UI.path + "\\decrypted";
-		File newDir = new File(newDirName);
-		FileUtils.forceMkdir(newDir);
-		FileUtils.cleanDirectory(newDir);
-		File[] files = new File(UI.path + "\\encrypted").listFiles();
-		
-    	chooseAlgo();
-    	System.out.println("Decrypting.. ");
+		File[] files = prepareDirectory(path);
+		System.out.println("Decrypting.. ");
     	
-	    for (File file : files) {
-	        if (!file.isDirectory()) {
-	        	fileToByteArr(UI.path + "\\encrypted\\" + file.getName());
-	        	activateAlgo(algorithm);
-	        	this.outputFile = Paths.get(newDirName + "\\" + file.getName());
-	        	write();
-	        }
-	    }
-	    System.out.println("Done");
-		
-	}
+		Thread [] threadArr = new Thread [files.length];
+    	for (int i = 0; i < threadArr.length; i++) {
+			threadArr[i] = new Thread(new Runner(UI, AF, algorithm, files[i]));
+		}
+    	for (int i = 0; i < threadArr.length; i++) {
+			threadArr[i].start();
+		}
+	 }
 
 	private void decryptDirSync(String path) throws IOException {
-		String newDirName = UI.path + "\\decrypted";
-		File newDir = new File(newDirName);
-		FileUtils.forceMkdir(newDir);
-		FileUtils.cleanDirectory(newDir);
-		File[] files = new File(UI.path + "\\encrypted").listFiles();
-		
-    	chooseAlgo();
-    	System.out.println("Decrypting.. ");
+		String newDirName = getNewDirName(UI.getOperation(), path);
+		File[] files = prepareDirectory(path);
+		System.out.println("Decrypting.. ");
     	
 	    for (File file : files) {
 	        if (!file.isDirectory()) {
-	        	fileToByteArr(UI.path + "\\encrypted\\" + file.getName());
+	        	fileToByteArr(path + "\\encrypted\\" + file.getName());
 	        	activateAlgo(algorithm);
 	        	this.outputFile = Paths.get(newDirName + "\\" + file.getName());
 	        	write();
 	        }
 	    }
-	    System.out.println("Done");
-		
 	}
 
 	private void encryptDirSync(String path) throws IOException {
-		String newDirName = UI.path + "\\encrypted";
-		File newDir = new File(newDirName);
-		FileUtils.forceMkdir(newDir);
-		FileUtils.cleanDirectory(newDir);
-		File[] files = new File(UI.path).listFiles();
-		
-    	chooseAlgo();
-    	System.out.println("Encrypting.. ");
+		String newDirName = getNewDirName(UI.getOperation(), path);
+		File[] files = prepareDirectory(path);
+		System.out.println("Encrypting.. ");
     	
 	    for (File file : files) {
 	        if (!file.isDirectory()) {
-	        	fileToByteArr(UI.path + "\\" + file.getName());
+	        	fileToByteArr(path + "\\" + file.getName());
 	        	activateAlgo(algorithm);
 	        	this.outputFile = Paths.get(newDirName + "\\" + file.getName());
 	        	write();
 	       }
 	    }
-	    System.out.println("Done");
-		
 	}
 	
-
 	private void decryptFile() throws IOException {
-		fileToByteArr(UI.path);
+		fileToByteArr(UI.getPath());
 		String[] pathArr;
-		pathArr = UI.path.split("\\.");
+		pathArr = UI.getPath().split("\\.");
 		this.outputFile = Paths.get(pathArr[0] + "_decrypted." + pathArr[1]);
 		chooseAlgo();
 		System.out.println("Decrypting.. ");
 		activateAlgo(algorithm);
 		write();
-		System.out.println("Done");
-		
 	}
 
 	private void encryptFile() throws IOException {
-		fileToByteArr(UI.path);
-		this.outputFile = Paths.get(UI.path + ".encrypted");
+		fileToByteArr(UI.getPath());
+		this.outputFile = Paths.get(UI.getPath() + ".encrypted");
 		chooseAlgo();
 		System.out.println("Encrypting.. ");
 		activateAlgo(algorithm);
 		write();
-		System.out.println("Done");
-		
 	}
 	
 	void write() throws IOException {
@@ -206,11 +170,36 @@ public @Data class Converter {
 				+ "\n 5 for Reverse" + "\n 6 for Split";
 	}
 	
+	private File [] prepareDirectory(String path) throws IOException{
+		File[] files;
+		String newDirName = getNewDirName(UI.getOperation(), path);
+		File newDir = new File(newDirName);
+		FileUtils.forceMkdir(newDir);
+		FileUtils.cleanDirectory(newDir);
+		if (UI.getOperation() == FileOperation.encryption) {
+			files = new File(UI.getPath()).listFiles();
+		}
+		else{
+			files = new File(UI.getPath() + "\\encrypted").listFiles();
+		}
+		chooseAlgo();
+		return files;
+	}
+	
+	static String getNewDirName(FileOperation operation, String path) {
+		if (operation == FileOperation.encryption){
+			return path + "\\encrypted";
+		}
+		else{
+			return path + "\\decrypted";
+		}
+	}
+	
 	private void chooseAlgo() {
 		boolean firstTry = true;
 		while (!(algorithm > 0 && algorithm < 7)) {
 			System.out.println(
-					"Choose your " + UI.operation.toString() +  " algorithm from the following list" + chooseAlgoFromListStringToPrint());
+					"Choose your " + UI.getOperation().toString() +  " algorithm from the following list" + chooseAlgoFromListStringToPrint());
 			algorithm = in.nextInt();
 			if (!firstTry) {
 				System.out.println("Pick a number between 1 to 6 only");
@@ -222,27 +211,27 @@ public @Data class Converter {
 	void activateAlgo(int algorithm) throws IOException {
 		switch (algorithm) {
 		case 1:
-			CaesarCipher cc = new CaesarCipher(UI.operation, AF);
+			CaesarCipher cc = new CaesarCipher( UI.getOperation(), AF);
 			fileArray = cc.doOperation(fileArray);
 			break;
 		case 2:
-			XOR x = new XOR(UI.operation, AF);
+			XOR x = new XOR( UI.getOperation(), AF);
 			fileArray = x.doOperation(fileArray);
 			break;
 		case 3:
-			Multiplication m = new Multiplication(UI.operation, AF);
+			Multiplication m = new Multiplication( UI.getOperation(), AF);
 			fileArray = m.doOperation(fileArray);
 			break;
 		case 4:
-			DoubleAlgo d = new DoubleAlgo(UI.operation, AF);
+			DoubleAlgo d = new DoubleAlgo( UI.getOperation(), AF);
 			fileArray = d.doOperation(fileArray);
 			break;
 		case 5:
-			Reverse r = new Reverse(UI.operation, AF);
+			Reverse r = new Reverse( UI.getOperation(), AF);
 			fileArray = r.doOperation(fileArray);
 			break;
 		case 6:
-			Split s = new Split(UI.operation, AF);
+			Split s = new Split( UI.getOperation(), AF);
 			fileArray = s.doOperation(fileArray);
 			break;
 		default:
@@ -265,24 +254,17 @@ class Runner implements Runnable {
 		this.file = file;
 	}
 	public void run() {
-		String newDirName;
+		String newDirName = Converter.getNewDirName( UI.getOperation(), UI.getPath());
 		Converter c;
-		
-		if (UI.operation == FileOperation.encryption){
-			newDirName = UI.path + "\\encrypted";
-		}
-		else{
-			newDirName = UI.path + "\\decrypted";
-		}
 		try {
 			c = new Converter(UI, AF);
 			c.setAlgorithm(algorithm);
 	        if (!file.isDirectory()) {
-	    		if (UI.operation == FileOperation.encryption){
-	    			c.fileToByteArr(UI.path + "\\" + file.getName());
+	    		if ( UI.getOperation() == FileOperation.encryption){
+	    			c.fileToByteArr(UI.getPath() + "\\" + file.getName());
 	    		}
 	    		else{
-	    			c.fileToByteArr(UI.path + "\\encrypted\\" + file.getName());
+	    			c.fileToByteArr(UI.getPath() + "\\encrypted\\" + file.getName());
 	    		}
 	        	c.activateAlgo(algorithm);
 	        	c.setOutputFile(Paths.get(newDirName + "\\" + file.getName())); ;
