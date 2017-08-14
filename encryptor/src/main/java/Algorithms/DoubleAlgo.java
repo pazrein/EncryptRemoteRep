@@ -6,7 +6,7 @@ import encryptor.FileOperation;
 
 public class DoubleAlgo extends AlgorithmAbstract {
 
-	public DoubleAlgo(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+	public DoubleAlgo(FileOperation operation, Algorithms.AlgoFields AF) throws IOException {
 		super(operation, AF);
 	}
 	

@@ -5,7 +5,7 @@ import java.io.IOException;
 import encryptor.FileOperation;
 
 public class XOR extends AlgorithmAbstract {
-	public XOR(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+	public XOR(FileOperation operation, Algorithms.AlgoFields AF) throws IOException {
 		super(operation, AF);
 	}
 	

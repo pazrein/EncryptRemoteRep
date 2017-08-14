@@ -1,4 +1,4 @@
-package encryptor;
+package Algorithms;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
+import encryptor.FileOperation;
 import lombok.Data;
 
 public  @Data class AlgoFields {

@@ -8,7 +8,7 @@ import encryptor.FileOperation;
 
 public class Reverse extends AlgorithmAbstract {
 	
-	public Reverse(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+	public Reverse(FileOperation operation, Algorithms.AlgoFields AF) throws IOException {
 		super(operation, AF);
 	}
 	

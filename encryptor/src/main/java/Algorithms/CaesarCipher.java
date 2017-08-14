@@ -6,7 +6,7 @@ import encryptor.FileOperation;
 
 public class CaesarCipher extends AlgorithmAbstract {
 
-	public CaesarCipher(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+	public CaesarCipher(FileOperation operation, Algorithms.AlgoFields AF) throws IOException {
 		super(operation, AF);
 	}
 	

@@ -15,7 +15,7 @@ public abstract class AlgorithmAbstract implements Algorithm {
 
 	static int counter = 0;
 
-	public AlgorithmAbstract(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+	public AlgorithmAbstract(FileOperation operation, Algorithms.AlgoFields AF) throws IOException {
 		this.operation = operation;
 		this.key = AF.getKey();
 		this.secKey = AF.getSecKey();

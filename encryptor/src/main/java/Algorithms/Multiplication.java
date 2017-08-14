@@ -6,7 +6,7 @@ import encryptor.FileOperation;
 
 public class Multiplication extends AlgorithmAbstract {
 
-	public Multiplication(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+	public Multiplication(FileOperation operation, Algorithms.AlgoFields AF) throws IOException {
 		super(operation, AF);
 	}
 	

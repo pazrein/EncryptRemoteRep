@@ -6,7 +6,7 @@ import java.util.Arrays;
 import encryptor.FileOperation;
 
 public class Split extends AlgorithmAbstract {
-	public Split(FileOperation operation, encryptor.AlgoFields AF) throws IOException {
+	public Split(FileOperation operation, Algorithms.AlgoFields AF) throws IOException {
 		super(operation, AF);
 	}
 	
