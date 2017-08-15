@@ -41,16 +41,18 @@ public  @Data class AlgoFields {
 		}
 	}
 	
-	private byte generateRandomKey() {
-		Random rnd;
-		rnd = new Random();
-		return (byte) (rnd.nextInt(MAX_VALUE - MIN_VALUE + 1) + MIN_VALUE);
+	byte generateRandomKey() {
+		return generateRandomByteInRange(MIN_VALUE,MAX_VALUE);
 	}
 	
-	private byte chooseAlgorithmRandomly() {
+	byte chooseAlgorithmRandomly() {
+		return generateRandomByteInRange(1,3);
+	}
+	
+	byte generateRandomByteInRange(int minVal,int maxVal){
 		Random rnd;
 		rnd = new Random();
-		return (byte) (rnd.nextInt(3) + 1);
+		return (byte) (rnd.nextInt(maxVal - minVal + 1) + minVal);
 	}
 	
 	private void writeKeysToFile(byte key, byte secKey, int algo1, int algo2) throws IOException {
