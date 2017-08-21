@@ -15,8 +15,6 @@ public class Main {
 		
 		Converter c = new Converter(UI);
 		c.convert(UI);
-		
-		System.out.println("Done");
 	}
 
 

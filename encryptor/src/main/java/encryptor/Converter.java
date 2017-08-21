@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.io.FileUtils;
 
@@ -70,6 +71,9 @@ public @Data class Converter {
 			}
 			break;
 		}
+		
+		AF.writeToFile();
+		System.out.println("Done");
 	}
 	
 		
@@ -202,12 +206,18 @@ public @Data class Converter {
 					"Choose your " + UI.getOperation().toString() +  " algorithm from the following list" + chooseAlgoFromListStringToPrint());
 			algorithm = in.nextInt();
 			if (!firstTry) {
-				System.out.println("Pick a number between 1 to 6 only");
+				System.out.println("---Pick a number between 1 to 6 only---");
 			}
 			firstTry = false;
 		}
+		if (algorithm == 4 || algorithm == 6) {
+			AF.addFields(1, 2);
+		}
+		if (algorithm == 5){
+			AF.addFields(0, 1);
+		}
 	}
-	
+	//TODO topping decorator on AlgoFields (Add more keys and algos) and also changed from array to list
 	void activateAlgo(int algorithm) throws IOException {
 		switch (algorithm) {
 		case 1:
@@ -241,10 +251,11 @@ public @Data class Converter {
 }
 
 class Runner implements Runnable {
-	int algorithm;
-	File file;
-	UserInput UI;
-	AlgoFields AF;
+	private int algorithm;
+	private File file;
+	private UserInput UI;
+	private AlgoFields AF;
+//	private Lock lock = new ReentrantLock();
 
 	
 	public Runner(UserInput UI, AlgoFields AF, int algorithm, File file) {
@@ -266,8 +277,9 @@ class Runner implements Runnable {
 	    		else{
 	    			c.fileToByteArr(UI.getPath() + "\\encrypted\\" + file.getName());
 	    		}
-	        	c.activateAlgo(algorithm);
-	        	c.setOutputFile(Paths.get(newDirName + "\\" + file.getName())); ;
+	  
+		        c.activateAlgo(algorithm);
+	        	c.setOutputFile(Paths.get(newDirName + "\\" + file.getName()));
 	        	c.write();
 	       }
 		} catch (IOException e) {

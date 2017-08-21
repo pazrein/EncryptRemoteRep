@@ -9,34 +9,25 @@ public class Split extends AlgorithmAbstract {
 	public Split(FileOperation operation, Algorithms.AlgoFields AF) throws IOException {
 		super(operation, AF);
 	}
-	
-	public Split (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
-		super(operation, key, secKey, algo1, algo2);
-	}
+
 
 	@Override
-	public byte[] encrypt(byte[] array) throws IOException {
-		byte[] array1, array2, tempArray;
+	public byte[] encrypt(byte[] array, byte key) throws IOException {
+		byte[] array0, array1, tempArray;
 
 		tempArray = Arrays.copyOf(array, array.length);
-		array1 = doAlgo(key, algo1, tempArray);
+		array0 = doAlgo(this.getKeys().get(0), this.getAlgos().get(0), tempArray);
+		
 		tempArray = Arrays.copyOf(array, array.length);
-		array2 = doAlgo(secKey, algo2, tempArray);
+		array1 = doAlgo(this.getKeys().get(1), this.getAlgos().get(1), tempArray);
 
-		buildArray(array, array1, array2);
+		buildArray(array, array0, array1);
 
-//		writeKeysToFile(key, secKey, algo1, algo2);
 		return array;
 	}
 
-	public byte[] decrypt(byte[] array) throws IOException {
-		byte[] array1, array2, tempArray;
-		tempArray = Arrays.copyOf(array, array.length);
-		array1 = doAlgo(key, algo1, tempArray);
-		tempArray = Arrays.copyOf(array, array.length);
-		array2 = doAlgo(secKey, algo2, tempArray);
-		buildArray(array, array1, array2);
-		return array;
+	public byte[] decrypt(byte[] array, byte key) throws IOException {
+		return encrypt(array, key);
 	}
 
 	byte[] buildArray(byte[] array, byte[] array1, byte[] array2) {

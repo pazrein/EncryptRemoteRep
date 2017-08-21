@@ -1,6 +1,7 @@
 package Algorithms;
 
 import java.io.IOException;
+import java.util.List;
 
 import encryptor.FileOperation;
 
@@ -10,8 +11,8 @@ public class CaesarCipher extends AlgorithmAbstract {
 		super(operation, AF);
 	}
 	
-	public CaesarCipher (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
-		super(operation, key, secKey, algo1, algo2);
+	public CaesarCipher(FileOperation operation,List <Byte> keys, List<Integer> algos) {
+		super(operation, keys,algos);
 	}
 
 	@Override

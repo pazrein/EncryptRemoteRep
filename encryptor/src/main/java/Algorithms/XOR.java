@@ -1,6 +1,7 @@
 package Algorithms;
 
 import java.io.IOException;
+import java.util.List;
 
 import encryptor.FileOperation;
 
@@ -9,8 +10,9 @@ public class XOR extends AlgorithmAbstract {
 		super(operation, AF);
 	}
 	
-	public XOR (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
-		super(operation, key, secKey, algo1, algo2);
+
+	public XOR(FileOperation operation,List <Byte> keys, List<Integer> algos){
+		super(operation, keys, algos);
 	}
 
 	@Override

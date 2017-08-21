@@ -10,36 +10,36 @@ public class DoubleAlgo extends AlgorithmAbstract {
 		super(operation, AF);
 	}
 	
-	public DoubleAlgo (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
-		super(operation, key, secKey, algo1, algo2);
-	}
-
 	@Override
-	public byte[] encrypt(byte[] array) throws IOException {
-						
-		array = doAlgo(key, algo1, array);
-		array = doAlgo(secKey, algo2, array);
+	public byte[] encrypt(byte[] array , byte key) throws IOException {
 
-//		writeKeysToFile(key, secKey, algo1, algo2);
+		array = doAlgo(this.getKeys().get(0), this.getAlgos().get(0), array);
+		array = doAlgo(this.getKeys().get(1), this.getAlgos().get(1), array);
+
 		return array;
 	}
 
-	public byte[] decrypt(byte[] array) throws IOException {
-		array = doAlgo(secKey, algo2, array);
-		array = doAlgo(key, algo1, array);
+	public byte[] decrypt(byte[] array, byte key) throws IOException {
+
+		
+		array = doAlgo(this.getKeys().get(1), this.getAlgos().get(1), array);
+		array = doAlgo(this.getKeys().get(0), this.getAlgos().get(0), array);
+		
 		return array;
 	}
 
 	@Override
 	public byte encryptPerByte(byte b, byte key) {
-		// Not used
+		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public byte decryptPerByte(byte b, byte key) {
-		// Not used
+		// TODO Auto-generated method stub
 		return 0;
 	}
+
+
 
 }

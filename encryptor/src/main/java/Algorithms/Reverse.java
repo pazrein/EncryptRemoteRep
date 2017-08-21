@@ -12,23 +12,19 @@ public class Reverse extends AlgorithmAbstract {
 		super(operation, AF);
 	}
 	
-	public Reverse (FileOperation operation, byte key, byte secKey,int algo1,int algo2) {
-		super(operation, key, secKey, algo1, algo2);
-	}
 
 	@Override
-	public byte[] encrypt(byte[] array) throws IOException {
+	public byte[] encrypt(byte[] array , byte key) throws IOException {
 		ArrayUtils.reverse(array);
 
-		array = doAlgo(key, algo1, array);
+		array = doAlgo(key, this.getAlgos().get(0), array);
 
-//		writeKeysToFile(key, secKey, algo1, algo2);
 		return array;
 
 	}
 
-	public byte[] decrypt(byte[] array) throws IOException {
-		array = doAlgo(key, algo1, array);
+	public byte[] decrypt(byte[] array , byte key) throws IOException {
+		array = doAlgo(key, this.getAlgos().get(0), array);
 		ArrayUtils.reverse(array);
 		return array;
 	}
