@@ -25,11 +25,10 @@ public @Data class AlgoFields {
 	public AlgoFields(FileOperation operation) throws IOException {
 		this.keys = new ArrayList<Byte>();
 		this.algos = new ArrayList<Integer>();
-		switch (operation) {
-		case encryption:
+		if (operation == FileOperation.encryption){
 			this.keys.add(generateRandomKey());
-			break;
-		case decryption:
+		}
+		else{
 			int listSize;
 			FileInputStream fos = new FileInputStream("key.bin");
 			DataInputStream dos = new DataInputStream(fos);
@@ -46,7 +45,6 @@ public @Data class AlgoFields {
 
 			dos.close();
 			fos.close();
-			break;
 		}
 	}
 

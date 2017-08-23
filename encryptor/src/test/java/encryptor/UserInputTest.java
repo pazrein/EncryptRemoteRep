@@ -77,7 +77,7 @@ public class UserInputTest {
     public ExpectedException exceptionGrabber = ExpectedException.none();
 	
 	@Test
-	public void getInput(){
+	public void getInputTest(){
 		exceptionGrabber.expect(IllegalArgumentException.class);
 		exceptionGrabber.expectMessage("Failed to enter path more than 3 times");
 		
